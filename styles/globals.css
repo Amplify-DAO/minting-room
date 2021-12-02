@@ -5,3 +5,8 @@
 .bn-onboard-custom.bn-onboard-modal {
   z-index: 99;
 }
+
+html,
+body {
+  min-height: 100vh;
+}

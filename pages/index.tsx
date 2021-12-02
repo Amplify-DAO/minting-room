@@ -84,7 +84,10 @@ const Home: NextPage = () => {
   return (
     <div
       className="bg-cover"
-      style={{ backgroundImage: "url('images/background.png')" }}
+      style={{
+        backgroundImage: "url('images/background.png')",
+        minHeight: "100vh",
+      }}
     >
       <div className="relative z-10 py-5">
         <Header />
