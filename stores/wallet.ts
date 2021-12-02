@@ -6,6 +6,7 @@ type WalletState = {
   balance: string;
   wallet: object;
   onboard: any;
+  notify: any;
   setAddress: (item?: string) => void;
   setNetwork: (item: string) => void;
   setBalance: (item: string) => void;

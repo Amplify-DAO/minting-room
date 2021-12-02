@@ -1,12 +1,17 @@
+import { Button } from "../components";
 import { useWalletStore } from "../stores";
 
 export default function Header() {
   const { address, onboard, resetWallet } = useWalletStore();
 
   async function handleOnboard() {
-    if (onboard) {
-      await onboard.walletSelect();
-      await onboard.walletCheck();
+    try {
+      if (onboard) {
+        await onboard.walletSelect();
+        await onboard.walletCheck();
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -17,14 +22,12 @@ export default function Header() {
     await onboard.walletReset();
   }
   return (
-    <header>
-      {address ? (
-        <div className="wallet">
-          <span>{address}</span>
-          <button onClick={handleReset}>Disconnect</button>
+    <header className="fixed top-0 w-full">
+      {address && (
+        <div className="flex justify-end items-center p-5">
+          <span className="pr-5">{address}</span>
+          <Button onClick={handleReset}>Disconnect</Button>
         </div>
-      ) : (
-        <button onClick={handleOnboard}>Connect Wallet</button>
       )}
     </header>
   );

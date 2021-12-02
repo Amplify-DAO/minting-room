@@ -1,3 +1,5 @@
+import Button from "./button";
 import Header from "./header";
+import Minter from "./minter";
 
-export { Header };
+export { Button, Header, Minter };

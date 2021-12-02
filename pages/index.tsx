@@ -1,12 +1,13 @@
 import type { NextPage } from "next";
 import { useEffect } from "react";
-import { Header } from "../components";
+import { Header, Minter } from "../components";
 import { initOnboard, initNotify } from "../services";
 import { useWalletStore } from "../stores";
 
 const Home: NextPage = () => {
   const {
     onboard,
+    wallet,
     setAddress,
     setNetwork,
     setBalance,
@@ -14,6 +15,34 @@ const Home: NextPage = () => {
     setOnboard,
     setNotify,
   } = useWalletStore();
+
+  async function addNetwork() {
+    const params = [
+      {
+        chainId: "0x13881",
+        chainName: "Matic(Polygon) Testnet Mumbai",
+        nativeCurrency: {
+          name: "MATIC",
+          symbol: "MATIC",
+          decimals: 18,
+        },
+        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+        blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+      },
+    ];
+    if ((window as any).ethereum) {
+      (window as any).ethereum.request({
+        method: "wallet_addEthereumChain",
+        params,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (wallet?.provider) {
+      addNetwork();
+    }
+  }, [wallet]);
 
   useEffect(() => {
     const onboard = initOnboard({
@@ -31,7 +60,8 @@ const Home: NextPage = () => {
     });
 
     setOnboard(onboard);
-    setNotify(initNotify());
+    //@TODO
+    // setNotify(initNotify());
   }, []);
 
   useEffect(() => {
@@ -51,8 +81,9 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col h-screen items-center justify-center">
       <Header />
+      <Minter />
     </div>
   );
 };
