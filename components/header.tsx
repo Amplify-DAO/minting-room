@@ -22,10 +22,12 @@ export default function Header() {
     await onboard.walletReset();
   }
   return (
-    <header className="fixed top-0 w-full">
+    <header className="w-full">
       {address && (
         <div className="flex justify-end items-center p-5">
-          <span className="pr-5">{address}</span>
+          <span className="pr-5 text-white">
+            {address.slice(0, 4)}...{address.slice(-4)}
+          </span>
           <Button onClick={handleReset}>Disconnect</Button>
         </div>
       )}

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Header, Minter } from "../components";
 import { initOnboard, initNotify } from "../services";
 import { useWalletStore } from "../stores";
+import BackgroundImage from "../public/images/background.png";
 
 const Home: NextPage = () => {
   const {
@@ -81,9 +82,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center">
-      <Header />
-      <Minter />
+    <div
+      className="bg-cover"
+      style={{ backgroundImage: "url('images/background.png')" }}
+    >
+      <div className="relative z-10 py-5">
+        <Header />
+        <div className="flex flex-col h-full">
+          <Minter />
+        </div>
+      </div>
     </div>
   );
 };
