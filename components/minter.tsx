@@ -21,7 +21,7 @@ function Loader() {
 }
 
 export default function Minter() {
-  const { address, onboard, wallet } = useWalletStore();
+  const { address, onboard, wallet, network } = useWalletStore();
   const [isMinting, setMinting] = useState(false);
   const [maxSupply, setMaxSupply] = useState(0);
   const [amountSold, setAmountSold] = useState(0);
@@ -44,7 +44,10 @@ export default function Minter() {
   }
 
   useEffect(() => {
-    if ((window as any).ethereum) {
+    if (
+      (window as any).ethereum &&
+      network === parseInt(process.env.NEXT_PUBLIC_NETWORK_ID, 10)
+    ) {
       fetchContractValues();
       fetch(
         "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd"
@@ -52,7 +55,7 @@ export default function Minter() {
         .then((res) => res.json())
         .then((res) => setMaticPrice(res["matic-network"].usd));
     }
-  }, [wallet?.provider, isMinting, address]);
+  }, [wallet?.provider, isMinting, address, network]);
 
   async function fetchContractValues() {
     try {
