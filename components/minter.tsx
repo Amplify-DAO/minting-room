@@ -25,7 +25,7 @@ export default function Minter() {
   const [isMinting, setMinting] = useState(false);
   const [maxSupply, setMaxSupply] = useState(0);
   const [amountSold, setAmountSold] = useState(0);
-  const [saleIsActive, setSaleIsActive] = useState(false);
+  const [saleIsActive, setSaleIsActive] = useState(true);
   const [price, setPrice] = useState(0);
   const [maticPrice, setMaticPrice] = useState(0);
   const [receipt, setReceipt] = useState();
@@ -67,6 +67,7 @@ export default function Minter() {
     setMaxSupply(await nftContract.functions.maxSupply());
     setAmountSold(await nftContract.functions.totalSupply());
     setPrice(await nftContract.functions.floorPrice());
+    setSaleIsActive(await nftContract.functions.saleIsActive());
   }
 
   async function handleMint() {
@@ -134,6 +135,8 @@ export default function Minter() {
 
   const totalPrice = ethers.utils.formatEther(price.toString()) * quantity;
 
+  const isSaleActive = saleIsActive[0];
+
   return (
     <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-min-content sm:h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
       <div className="space-y-4 h-full">
@@ -146,9 +149,9 @@ export default function Minter() {
           </Canvas>
         </div>
 
-        {address && (
+        {address && isSaleActive && (
           <div className="space-y-2">
-            <p className="font-bold text-xl">Chapel</p>
+            <p className="font-bold text-xl">Chapel Genensis</p>
             <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
               <p>Remaining Supply</p>
               <p>
@@ -158,7 +161,7 @@ export default function Minter() {
               <p>Price</p>
               <p>
                 {totalPrice} MATIC ($
-                {maticPrice * totalPrice})
+                {(maticPrice * totalPrice).toFixed(2)})
               </p>
             </div>
           </div>
@@ -173,7 +176,7 @@ export default function Minter() {
               View transaction
             </a>
           </Button>
-        ) : address ? (
+        ) : address && isSaleActive ? (
           <>
             <div>
               <label
@@ -198,6 +201,8 @@ export default function Minter() {
               {isMinting ? "Minting NFT..." : "Mint"}
             </Button>
           </>
+        ) : !isSaleActive ? (
+          <p className="font-bold text-xl">Coming soon...</p>
         ) : (
           <div className="flex justify-center">
             <Button onClick={handleOnboard}>Connect wallet</Button>
