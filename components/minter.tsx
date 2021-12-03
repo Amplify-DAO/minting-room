@@ -140,7 +140,7 @@ export default function Minter() {
   const isSaleActive = saleIsActive[0];
 
   return (
-    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-min-content sm:h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
+    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
       <div className="space-y-4 h-full">
         <div className="relative h-2/3">
           <Canvas>
