@@ -8,6 +8,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/drei": "^7.25.4",
+    "@react-three/fiber": "^7.0.21",
     "bnc-notify": "^1.9.1",
     "bnc-onboard": "^1.35.4",
     "ethers": "^5.5.1",
@@ -15,6 +17,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hot-toast": "^2.1.1",
+    "three": "^0.135.0",
     "zustand": "^3.6.5"
   },
   "devDependencies": {

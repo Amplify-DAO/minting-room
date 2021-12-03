@@ -3,13 +3,21 @@ import { BigNumber } from "@ethersproject/bignumber";
 import SwagAbi from "../abis/swag.json";
 import { Button } from "../components";
 import { useWalletStore } from "../stores";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { Canvas } from "@react-three/fiber";
+import { Html, useProgress, OrbitControls } from "@react-three/drei";
+import Model from "../components/nft";
 
 const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
 function formatRevert(message: string) {
   return message.split("reverted: ")[1];
+}
+
+function Loader() {
+  const { progress } = useProgress();
+  return <Html center>{progress} % loaded</Html>;
 }
 
 export default function Minter() {
@@ -127,78 +135,76 @@ export default function Minter() {
   const totalPrice = ethers.utils.formatEther(price.toString()) * quantity;
 
   return (
-    <div className="p-5 px-10 md:w-2/4 lg:w-2/3 xl:w-2/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
-      <div>
-        <div className="space-y-4">
-          <div className="relative">
-            <div className="aspect-h-1 aspect-w-1">
-              <img
-                className="object-cover h-full w-full "
-                src="/images/nft.png"
-                alt=""
-              />
+    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-min-content sm:h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
+      <div className="space-y-4 h-full">
+        <div className="relative h-2/3">
+          <Canvas>
+            <OrbitControls autoRotate autoRotateSpeed={2} enablePan={true} />
+            <Suspense fallback={<Loader />}>
+              <Model scale={[3, 5, 3]} />
+            </Suspense>
+          </Canvas>
+        </div>
+
+        {address && (
+          <div className="space-y-2">
+            <p className="font-bold text-xl">Chapel</p>
+            <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
+              <p>Remaining Supply</p>
+              <p>
+                {maxSupply.toString() - amountSold.toString()}/
+                {maxSupply.toString()}
+              </p>
+              <p>Price</p>
+              <p>
+                {totalPrice} MATIC ($
+                {maticPrice * totalPrice})
+              </p>
             </div>
           </div>
-
-          {address && (
-            <div className="space-y-2">
-              <p className="font-bold text-xl">Chapel</p>
-              <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
-                <p>Remaining Supply</p>
-                <p>
-                  {maxSupply.toString() - amountSold.toString()}/
-                  {maxSupply.toString()}
-                </p>
-                <p>Price</p>
-                <p>
-                  {totalPrice} MATIC ($
-                  {maticPrice * totalPrice})
-                </p>
-              </div>
-            </div>
-          )}
-          {receipt ? (
-            <Button disabled={isMinting}>
-              <a
-                href={`https://mumbai.polygonscan.com/tx/${receipt.transactionHash}`}
-                target="_blank"
-                rel="noreferrer"
+        )}
+        {receipt ? (
+          <Button disabled={isMinting}>
+            <a
+              href={`https://mumbai.polygonscan.com/tx/${receipt.transactionHash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View transaction
+            </a>
+          </Button>
+        ) : address ? (
+          <>
+            <div>
+              <label
+                htmlFor="quantity"
+                className="block text-sm font-medium text-gray-700"
               >
-                View transaction
-              </a>
-            </Button>
-          ) : address ? (
-            <>
-              <div>
-                <label
-                  htmlFor="quantity"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quantity
-                </label>
-                <select
-                  onChange={(e) => setQuantity(e.target.value)}
-                  id="quantity"
-                  name="quantity"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                >
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                </select>
-              </div>
-              <Button onClick={handleMint} disabled={isMinting}>
-                {isMinting ? "Minting NFT..." : "Mint"}
-              </Button>
-            </>
-          ) : (
-            <div className="flex justify-center">
-              <Button onClick={handleOnboard}>Connect wallet</Button>
+                Quantity
+              </label>
+              <select
+                onChange={(e) => setQuantity(e.target.value)}
+                id="quantity"
+                name="quantity"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              >
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+              </select>
             </div>
-          )}
-        </div>
+            <Button onClick={handleMint} disabled={isMinting}>
+              {isMinting ? "Minting NFT..." : "Mint"}
+            </Button>
+          </>
+        ) : (
+          <div className="flex justify-center">
+            <Button onClick={handleOnboard}>Connect wallet</Button>
+          </div>
+        )}
       </div>
+
       <Toaster />
     </div>
   );
