@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import SwagAbi from "../abis/swag.json";
-import { Button } from "../components";
-import { useWalletStore } from "../stores";
+import NFTAbi from "../abis/nft.json";
+import { Button, Details, MintingStatus } from "../components";
+import { useDetailsStore, useWalletStore } from "../stores";
 import { useEffect, useState, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Canvas } from "@react-three/fiber";
@@ -22,14 +22,21 @@ function Loader() {
 
 export default function Minter() {
   const { address, onboard, wallet, network } = useWalletStore();
-  const [isMinting, setMinting] = useState(false);
-  const [maxSupply, setMaxSupply] = useState(0);
-  const [amountSold, setAmountSold] = useState(0);
-  const [saleIsActive, setSaleIsActive] = useState([true]);
-  const [price, setPrice] = useState(0);
-  const [maticPrice, setMaticPrice] = useState(0);
-  const [receipt, setReceipt] = useState();
   const [quantity, setQuantity] = useState(1);
+
+  const {
+    saleIsActive,
+    floorPrice,
+    setOwner,
+    setSaleIsActive,
+    setMaxSupply,
+    setFloorPrice,
+    setTotalSupply,
+    setMaticPrice,
+  } = useDetailsStore();
+
+  const [isMinting, setMinting] = useState(false);
+  const [receipt, setReceipt] = useState();
   const [isLoading, setLoading] = useState(true);
 
   async function handleOnboard() {
@@ -65,14 +72,25 @@ export default function Minter() {
       const signer = web3Provider.getSigner();
       const nftContract = new ethers.Contract(
         NFT_CONTRACT_ADDRESS,
-        SwagAbi.abi,
+        NFTAbi.abi,
         signer
       );
+      setMaxSupply(
+        await nftContract.functions.maxSupply().then((res) => res.toString())
+      );
+      setTotalSupply(
+        await nftContract.functions.totalSupply().then((res) => res.toString())
+      );
+      setFloorPrice(
+        await nftContract.functions.floorPrice().then((res) => res.toString())
+      );
+      setSaleIsActive(
+        await nftContract.functions.saleIsActive().then((res) => res[0])
+      );
 
-      setMaxSupply(await nftContract.functions.maxSupply());
-      setAmountSold(await nftContract.functions.totalSupply());
-      setPrice(await nftContract.functions.floorPrice());
-      setSaleIsActive(await nftContract.functions.saleIsActive());
+      setOwner(
+        await nftContract.functions.owner().then((res) => res.toString())
+      );
       setLoading(false);
     } catch (e) {
       console.log(e);
@@ -83,13 +101,14 @@ export default function Minter() {
     await onboard.walletCheck();
     setMinting(true);
     try {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const value = BigNumber.from(quantity).mul(price.toString());
-
+      const value = BigNumber.from(quantity).mul(floorPrice.toString());
+      const web3Provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
       const signer = web3Provider.getSigner();
       const nftContract = new ethers.Contract(
         NFT_CONTRACT_ADDRESS,
-        SwagAbi.abi,
+        NFTAbi.abi,
         signer
       );
 
@@ -108,8 +127,6 @@ export default function Minter() {
       });
 
       const receipt = await tx.wait();
-
-      console.log(receipt);
 
       setMinting(false);
       setReceipt(receipt);
@@ -142,12 +159,8 @@ export default function Minter() {
     }
   }
 
-  const totalPrice = ethers.utils.formatEther(price.toString()) * quantity;
-
-  const isSaleActive = saleIsActive[0];
-
   return (
-    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
+    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-full sm:h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
       <div className="space-y-4 h-full">
         <div className="relative h-2/3">
           <Canvas>
@@ -157,68 +170,23 @@ export default function Minter() {
             </Suspense>
           </Canvas>
         </div>
-
-        {!isSaleActive ? (
-          <p className="font-bold text-xl">Coming soon...</p>
+        {!isLoading && (
+          <Details
+            saleIsActive={saleIsActive}
+            quantity={quantity}
+            setQuantity={setQuantity}
+          />
+        )}
+        {address && !isLoading ? (
+          <MintingStatus
+            handleMint={handleMint}
+            isMinting={isMinting}
+            receipt={receipt}
+            saleIsActive={saleIsActive}
+          />
         ) : (
-          <div>
-            {address && (
-              <div className="space-y-2">
-                <p className="font-bold text-xl">Chapel Genensis</p>
-                <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
-                  <p>Remaining Supply</p>
-                  <p>
-                    {maxSupply.toString() - amountSold.toString()}/
-                    {maxSupply.toString()}
-                  </p>
-                  <p>Price</p>
-                  <p>
-                    {totalPrice} MATIC ($
-                    {(maticPrice * totalPrice).toFixed(2)})
-                  </p>
-                </div>
-              </div>
-            )}
-            {receipt ? (
-              <Button disabled={isMinting}>
-                <a
-                  href={`https://mumbai.polygonscan.com/tx/${receipt.transactionHash}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View transaction
-                </a>
-              </Button>
-            ) : address ? (
-              <>
-                <div>
-                  <label
-                    htmlFor="quantity"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Quantity
-                  </label>
-                  <select
-                    onChange={(e) => setQuantity(e.target.value)}
-                    id="quantity"
-                    name="quantity"
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                  >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                  </select>
-                </div>
-                <Button onClick={handleMint} disabled={isMinting}>
-                  {isMinting ? "Minting NFT..." : "Mint"}
-                </Button>
-              </>
-            ) : (
-              <div className="flex justify-center">
-                <Button onClick={handleOnboard}>Connect wallet</Button>
-              </div>
-            )}
+          <div className="text-center">
+            <Button onClick={handleOnboard}>Connect wallet</Button>
           </div>
         )}
       </div>

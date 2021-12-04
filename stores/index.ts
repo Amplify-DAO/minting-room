@@ -1,3 +1,4 @@
+import useDetailsStore from "./details";
 import useWalletStore from "./wallet";
 
-export { useWalletStore };
+export { useDetailsStore, useWalletStore };
