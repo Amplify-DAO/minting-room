@@ -1,28 +1,31 @@
-import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import NFTAbi from "../abis/nft.json";
-import { Button, Details, MintingStatus } from "../components";
-import { useDetailsStore, useWalletStore } from "../stores";
+import { Html, useProgress, OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { ethers } from "ethers";
+import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { Canvas } from "@react-three/fiber";
-import { Html, useProgress, OrbitControls } from "@react-three/drei";
-import Model from "../components/nft";
+
+import NFTAbi from "../abis/nft.json";
+import { Button, Details, MintingStatus, NFTModel } from "../components";
+import { useDetailsStore, useWalletStore } from "../stores";
 
 const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
 function formatRevert(message: string) {
-  return message.split("reverted: ")[1];
+  // e.g. reverted: CHPL: <message>
+  return message.split(":")[2];
 }
 
 function Loader() {
   const { progress } = useProgress();
-  return <Html center>{progress} % loaded</Html>;
+  return <Html center>{progress}%</Html>;
 }
 
 export default function Minter() {
   const { address, onboard, wallet, network } = useWalletStore();
   const [quantity, setQuantity] = useState(1);
+  const { t } = useTranslation("common");
 
   const {
     saleIsActive,
@@ -166,7 +169,7 @@ export default function Minter() {
           <Canvas>
             <OrbitControls autoRotate autoRotateSpeed={2} enablePan={true} />
             <Suspense fallback={<Loader />}>
-              <Model scale={[3, 5, 3]} />
+              <NFTModel scale={[3, 5, 3]} />
             </Suspense>
           </Canvas>
         </div>
@@ -186,7 +189,9 @@ export default function Minter() {
           />
         ) : (
           <div className="text-center">
-            <Button onClick={handleOnboard}>Connect wallet</Button>
+            <Button onClick={handleOnboard}>
+              {t("wallet.connect_button")}
+            </Button>
           </div>
         )}
       </div>

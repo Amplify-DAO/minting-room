@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from "@heroicons/react/outline";
 import { Button } from "../components";
 import { useWalletStore } from "../stores";
+import useTranslation from "next-translate/useTranslation";
 
 interface MintingStatusProps {
   receipt: any;
@@ -9,6 +10,8 @@ interface MintingStatusProps {
   saleIsActive: boolean;
 }
 
+const networkID = parseInt(process.env.NEXT_PUBLIC_NETWORK_ID ?? "1", 10);
+
 export default function MintingStatus({
   receipt,
   isMinting,
@@ -16,15 +19,21 @@ export default function MintingStatus({
   saleIsActive,
 }: MintingStatusProps) {
   const { network } = useWalletStore();
-  const wrongNetwork =
-    parseInt(network, 10) !== parseInt(process.env.NEXT_PUBLIC_NETWORK_ID, 10);
+  const { t } = useTranslation("common");
+  const wrongNetwork = parseInt(network, 10) !== networkID;
 
   if (wrongNetwork) {
     return null;
   }
 
   if (!saleIsActive) {
-    return <p>Coming soon...</p>;
+    return (
+      <>
+        <p>{t("minting.pre_sale_1")}</p>
+        <p>{t("minting.pre_sale_2")}</p>
+        <p>{t("minting.pre_sale_3")}</p>
+      </>
+    );
   }
 
   if (receipt) {
@@ -35,7 +44,7 @@ export default function MintingStatus({
           target="_blank"
           rel="noreferrer"
         >
-          View transaction
+          {t("minting.view_transaction_button")}
         </a>
         <ExternalLinkIcon className="h-6 w-6 pl-2" />
       </Button>
@@ -44,7 +53,7 @@ export default function MintingStatus({
 
   return (
     <Button onClick={handleMint} disabled={isMinting}>
-      {isMinting ? "Minting NFT..." : "Mint"}
+      {isMinting ? t("minting.is_minting_button") : t("minting.mint_button")}
     </Button>
   );
 }

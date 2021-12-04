@@ -3,21 +3,34 @@ import { useDetailsStore, useWalletStore } from "../stores";
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 import NFTAbi from "../abis/nft.json";
+import useTranslation from "next-translate/useTranslation";
+import toast from "react-hot-toast";
 
 const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
+const networkID = parseInt(process.env.NEXT_PUBLIC_NETWORK_ID ?? "1", 10);
 
 export default function Header() {
   const { address, onboard, resetWallet, wallet, network } = useWalletStore();
-  const { owner, saleIsActive } = useDetailsStore();
+  const { owner, saleIsActive, setSaleIsActive } = useDetailsStore();
+
+  const [pendingSaleState, setPendingSaleState] = useState(false);
+  const [pendingWithdraw, setPendingWithdraw] = useState(false);
+  const [balance, setBalance] = useState(null);
+
+  const { t } = useTranslation("common");
+
   const isOwner = Boolean(
     address?.toLowerCase() === owner?.toString().toLowerCase()
   );
-  const [balance, setBalance] = useState(null);
+
+  useEffect(() => {
+    fetchContractValues();
+  }, [pendingSaleState, pendingWithdraw]);
 
   useEffect(() => {
     if (
       (window as any).ethereum &&
-      network === parseInt(process.env.NEXT_PUBLIC_NETWORK_ID, 10) &&
+      parseInt(network, 10) === networkID &&
       isOwner
     ) {
       fetchContractValues();
@@ -35,8 +48,13 @@ export default function Header() {
         NFTAbi.abi,
         signer
       );
-      const contractBalance = await nftContract.showBalance();
-      setBalance(contractBalance.toString());
+      setBalance(
+        await nftContract.functions.showBalance().then((res) => res.toString())
+      );
+
+      setSaleIsActive(
+        await nftContract.functions.saleIsActive().then((res) => res[0])
+      );
     } catch (e) {
       console.log(e);
     }
@@ -50,6 +68,7 @@ export default function Header() {
   }
 
   async function handleWithdraw() {
+    setPendingWithdraw(true);
     const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
     const web3Provider = new ethers.providers.Web3Provider(
@@ -61,10 +80,30 @@ export default function Header() {
       NFTAbi.abi,
       signer
     );
-    await nftContract.withdraw();
+    const tx = await nftContract.withdraw();
+
+    const pendingToast = toast.loading("Withdrawing MATIC...", {
+      icon: "⛏",
+      position: "bottom-right",
+      className: "font-semibold tracking-tight",
+    });
+
+    await tx.wait();
+
+    toast.dismiss(pendingToast);
+
+    toast.success("Withdraw successful!", {
+      duration: 5000,
+      icon: "🚀",
+      position: "bottom-right",
+      className: "font-semibold tracking-tight",
+    });
+
+    setPendingWithdraw(false);
   }
 
   async function handleToggleSale() {
+    setPendingSaleState(true);
     const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
     const web3Provider = new ethers.providers.Web3Provider(
@@ -76,7 +115,26 @@ export default function Header() {
       NFTAbi.abi,
       signer
     );
-    await nftContract.toggleSaleState();
+    const tx = await nftContract.toggleSaleState();
+
+    const pendingToast = toast.loading("Toggling sale state...", {
+      icon: "⛏",
+      position: "bottom-right",
+      className: "font-semibold tracking-tight",
+    });
+
+    await tx.wait();
+
+    toast.dismiss(pendingToast);
+
+    toast.success("Success!", {
+      duration: 5000,
+      icon: "🚀",
+      position: "bottom-right",
+      className: "font-semibold tracking-tight",
+    });
+
+    setPendingSaleState(false);
   }
 
   return (
@@ -87,14 +145,25 @@ export default function Header() {
             {address.slice(0, 4)}...{address.slice(-4)}
           </span>
           <div className="grid grid-cols-auto grid-flow-col gap-2">
-            <Button onClick={handleReset}>Disconnect</Button>
+            <Button onClick={handleReset}>
+              {t("wallet.disconnect_button")}
+            </Button>
             {isOwner && (
               <>
-                <Button onClick={handleWithdraw}>
-                  Withdraw {balance && ethers.utils.formatEther(balance)}MATIC
+                <Button isLoading={pendingWithdraw} onClick={handleWithdraw}>
+                  {pendingWithdraw
+                    ? t("transactions.pending_withdraw")
+                    : t("admin.withdraw_button", {
+                        amount: balance && ethers.utils.formatEther(balance),
+                        currency: "MATIC",
+                      })}
                 </Button>
-                <Button onClick={handleToggleSale}>
-                  {saleIsActive ? "Pause Sale" : "Start Sale"}
+                <Button isLoading={pendingSaleState} onClick={handleToggleSale}>
+                  {pendingSaleState
+                    ? t("transactions.pending_sale_state")
+                    : saleIsActive
+                    ? t("admin.pause_sale_button")
+                    : t("admin.start_sale_button")}
                 </Button>
               </>
             )}

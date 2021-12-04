@@ -1,0 +1,30 @@
+{
+  "wallet": {
+    "connect_button": "Connect wallet",
+    "disconnect_button": "Disconnect"
+  },
+  "minting": {
+    "pre_sale_1": "It's nearly time.",
+    "pre_sale_2": "The Chapel AAA NFT will be yours to mint on 9th December. 1808 will be up for grabs. Make sure you get yours.",
+    "pre_sale_3": "Let's change live music from the grass roots up!",
+    "mint_button": "Mint",
+    "is_minting_button": "Minting NFT...",
+    "view_transaction_button": "View transaction"
+  },
+  "admin": {
+    "withdraw_button": "Withdraw {{amount}} {{currency}}",
+    "pause_sale_button": "Pause Sale",
+    "start_sale_button": "Start Sale"
+  },
+  "details": {
+    "name": "Chapel Genesis",
+    "remaining_supply": "Remaining supply",
+    "price": "Price",
+    "quantity": "Quantity",
+    "currency": "MATIC"
+  },
+  "transactions": {
+    "pending_withdraw": "Pending withdraw...",
+    "pending_sale_state": "toggling sale state..."
+  }
+}

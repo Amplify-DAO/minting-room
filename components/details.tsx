@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 import { useDetailsStore } from "../stores";
+import useTranslation from "next-translate/useTranslation";
 
 interface DetailsProps {
   quantity: number;
-  setQuantity: () => void;
+  setQuantity: (amount: number) => void;
   saleIsActive: boolean;
 }
 
@@ -12,6 +13,7 @@ export default function Details({
   setQuantity,
   saleIsActive,
 }: DetailsProps) {
+  const { t } = useTranslation("common");
   const { maxSupply, totalSupply, maticPrice, floorPrice } = useDetailsStore();
   const totalPrice = ethers.utils.formatEther(floorPrice) * quantity;
 
@@ -22,15 +24,15 @@ export default function Details({
   return (
     <>
       <div className="space-y-2">
-        <p className="font-bold text-xl">Chapel Genensis</p>
+        <p className="font-bold text-xl">{t("details.name")}</p>
         <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
-          <p>Remaining Supply</p>
+          <p>{t("details.remaining_supply")}</p>
           <p>
             {maxSupply - totalSupply}/{maxSupply}
           </p>
-          <p>Price</p>
+          <p>{t("details.price")}</p>
           <p>
-            {totalPrice} MATIC ($
+            {totalPrice} {t("details.currency")} ($
             {(maticPrice * totalPrice).toFixed(2)})
           </p>
         </div>
@@ -40,7 +42,7 @@ export default function Details({
           htmlFor="quantity"
           className="block text-sm font-medium text-gray-700"
         >
-          Quantity
+          {t("details.quantity")}
         </label>
         <select
           onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
