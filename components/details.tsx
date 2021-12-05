@@ -38,10 +38,7 @@ export default function Details({
         </div>
       </div>
       <div>
-        <label
-          htmlFor="quantity"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="quantity" className="block text-sm font-medium my-2">
           {t("details.quantity")}
         </label>
         <select

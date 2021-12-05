@@ -59,7 +59,7 @@ const Home: NextPage = () => {
     >
       <div className="relative z-10 py-5">
         <Header />
-        <div className="flex flex-col h-screen sm:px-2">
+        <div className="flex flex-col h-full sm:px-2">
           <Minter />
         </div>
       </div>
