@@ -13,8 +13,12 @@ import { useDetailsStore, useWalletStore } from "../stores";
 const NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
 function formatRevert(message: string) {
-  // e.g. reverted: CHPL: <message>
-  return message.split(":")[2];
+  if (message.startsWith("err:")) {
+    return "You do not have enough funds in your wallet.";
+  } else {
+    // e.g. reverted: CHPL: <message>
+    return message.split(":")[2];
+  }
 }
 
 function Loader() {
@@ -116,7 +120,7 @@ export default function Minter() {
       );
 
       const tx = await nftContract.mintToken(
-        "https://gateway.pinata.cloud/ipfs/QmQnqD4fw2uHkeM3W4ubZ2TMmqsrBg3hzJR77nSkUkBbdh",
+        process.env.NEXT_PUBLIC_TOKEN_URI,
         quantity,
         {
           value,
@@ -163,9 +167,9 @@ export default function Minter() {
   }
 
   return (
-    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/3 xl:w-2/6 h-full sm:h-5/6 mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
+    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/6 xl:w-2/6 h-min-content mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
       <div className="space-y-4 h-full">
-        <div className="relative h-2/3">
+        <div className="relative h-2/3 md:h-96">
           <Canvas>
             <OrbitControls autoRotate autoRotateSpeed={2} enablePan={true} />
             <Suspense fallback={<Loader />}>

@@ -38,22 +38,26 @@ export default function MintingStatus({
 
   if (receipt) {
     return (
-      <Button>
-        <a
-          href={`${process.env.NEXT_PUBLIC_BLOCK_EXPLORER_URL}/tx/${receipt.transactionHash}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t("minting.view_transaction_button")}
-        </a>
-        <ExternalLinkIcon className="h-6 w-6 pl-2" />
-      </Button>
+      <div className="my-2">
+        <Button>
+          <a
+            href={`${process.env.NEXT_PUBLIC_BLOCK_EXPLORER_URL}/tx/${receipt.transactionHash}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("minting.view_transaction_button")}
+          </a>
+          <ExternalLinkIcon className="h-6 w-6 pl-2" />
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Button onClick={handleMint} disabled={isMinting}>
-      {isMinting ? t("minting.is_minting_button") : t("minting.mint_button")}
-    </Button>
+    <div className="my-2">
+      <Button onClick={handleMint} disabled={isMinting}>
+        {isMinting ? t("minting.is_minting_button") : t("minting.mint_button")}
+      </Button>
+    </div>
   );
 }
