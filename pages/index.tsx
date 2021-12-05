@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import { useEffect } from "react";
 import { Header, Minter } from "../components";
-import { initOnboard, initNotify } from "../services";
+import { addNetwork, NETWORK_ID, readyToTransact } from "../helpers";
+import { initOnboard } from "../services";
 import { useWalletStore } from "../stores";
-import BackgroundImage from "../public/images/background.png";
 
 const Home: NextPage = () => {
   const {
@@ -14,34 +14,11 @@ const Home: NextPage = () => {
     setBalance,
     setWallet,
     setOnboard,
-    setNotify,
   } = useWalletStore();
-
-  async function addNetwork() {
-    const params = [
-      {
-        chainId: "0x13881",
-        chainName: "Matic(Polygon) Testnet Mumbai",
-        nativeCurrency: {
-          name: "MATIC",
-          symbol: "MATIC",
-          decimals: 18,
-        },
-        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
-        blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-      },
-    ];
-    if ((window as any).ethereum) {
-      (window as any).ethereum.request({
-        method: "wallet_addEthereumChain",
-        params,
-      });
-    }
-  }
 
   useEffect(() => {
     if (wallet?.provider) {
-      addNetwork();
+      addNetwork(NETWORK_ID);
     }
   }, [wallet]);
 
@@ -61,8 +38,6 @@ const Home: NextPage = () => {
     });
 
     setOnboard(onboard);
-    //@TODO
-    // setNotify(initNotify());
   }, []);
 
   useEffect(() => {
@@ -70,16 +45,9 @@ const Home: NextPage = () => {
       window.localStorage.getItem("selectedWallet");
 
     if (previouslySelectedWallet && onboard) {
-      readyToTransact(previouslySelectedWallet);
+      readyToTransact(onboard, previouslySelectedWallet);
     }
   }, [onboard]);
-
-  async function readyToTransact(previouslySelectedWallet: any) {
-    if (onboard) {
-      await onboard.walletSelect(previouslySelectedWallet);
-      await onboard.walletCheck();
-    }
-  }
 
   return (
     <div

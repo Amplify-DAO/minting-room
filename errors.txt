@@ -1,4 +1,0 @@
-If purchasing of NFT is disabled. I.E before the event/disaster prevention - "CHPL: Sale must be active to mint CHPL"
-If you pay less MATIC than the required price - "CHPL: Ether value sent is not correct"
-If the NFT's are sold out - "CHPL: Purchase would exceed max supply of CHPL"
-If you have minted your maximum allowance of NFTs (currently 4) - "CHPL: You can't mint anymore tokens"
