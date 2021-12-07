@@ -23,3 +23,27 @@ body {
     0 95%
   );
 }
+
+@font-face {
+  font-family: "Eurostile";
+  src: url("/fonts/EurostileNormal.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Eurostile Bold";
+  src: url("/fonts/EurostileBold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Eurostile Extended";
+  src: url("/fonts/EurostileExtended.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

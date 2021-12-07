@@ -24,7 +24,10 @@ export default function Details({
   return (
     <>
       <div className="space-y-2">
-        <p className="font-bold text-xl">{t("details.name")}</p>
+        <p className="font-audiowide text-2xl">{t("details.name")}</p>
+        <div className="py-2">
+          <p>{t("minting.during_sale_1")}</p>
+        </div>
         <div className="grid grid-cols-2 items-center text-sm leading-6 font-medium space-y-1">
           <p>{t("details.remaining_supply")}</p>
           <p>

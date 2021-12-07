@@ -3,6 +3,7 @@ import { useDetailsStore, useWalletStore } from "../stores";
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 import NFTAbi from "../abis/nft.json";
+import Image from "next/image";
 import useTranslation from "next-translate/useTranslation";
 import toast from "react-hot-toast";
 
@@ -139,37 +140,59 @@ export default function Header() {
 
   return (
     <header className="w-full">
-      {address && (
-        <div className="flex justify-end items-center p-5">
-          <span className="pr-5 text-white">
-            {address.slice(0, 4)}...{address.slice(-4)}
-          </span>
-          <div className="grid grid-cols-auto grid-flow-col gap-2">
-            <Button onClick={handleReset}>
-              {t("wallet.disconnect_button")}
-            </Button>
-            {isOwner && (
-              <>
-                <Button isLoading={pendingWithdraw} onClick={handleWithdraw}>
-                  {pendingWithdraw
-                    ? t("transactions.pending_withdraw")
-                    : t("admin.withdraw_button", {
-                        amount: balance && ethers.utils.formatEther(balance),
-                        currency: "MATIC",
-                      })}
-                </Button>
-                <Button isLoading={pendingSaleState} onClick={handleToggleSale}>
-                  {pendingSaleState
-                    ? t("transactions.pending_sale_state")
-                    : saleIsActive
-                    ? t("admin.pause_sale_button")
-                    : t("admin.start_sale_button")}
-                </Button>
-              </>
-            )}
-          </div>
+      <div className="flex justify-between items-center p-5 sm:py-0 sm:px-20">
+        <div className="flex items-center">
+          <Image
+            className="hidden sm:block"
+            src="/images/icon.png"
+            width={115}
+            height={128}
+          />
+          <p className="hidden xl:block font-audiowide pl-24 uppercase text-white font-bold text-2xl tracking-widest">
+            {t("header.tagline")}
+          </p>
         </div>
-      )}
+        <div className="flex justify-between items-center">
+          {address && (
+            <>
+              <span className="font-audiowide tracking-wide pr-5 text-white">
+                {address.slice(0, 4)}...{address.slice(-4)}
+              </span>
+              <div className="grid grid-cols-auto grid-flow-col gap-2">
+                <Button onClick={handleReset}>
+                  {t("wallet.disconnect_button")}
+                </Button>
+                {isOwner && (
+                  <>
+                    <Button
+                      isLoading={pendingWithdraw}
+                      onClick={handleWithdraw}
+                    >
+                      {pendingWithdraw
+                        ? t("transactions.pending_withdraw")
+                        : t("admin.withdraw_button", {
+                            amount:
+                              balance && ethers.utils.formatEther(balance),
+                            currency: "MATIC",
+                          })}
+                    </Button>
+                    <Button
+                      isLoading={pendingSaleState}
+                      onClick={handleToggleSale}
+                    >
+                      {pendingSaleState
+                        ? t("transactions.pending_sale_state")
+                        : saleIsActive
+                        ? t("admin.pause_sale_button")
+                        : t("admin.start_sale_button")}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </header>
   );
 }

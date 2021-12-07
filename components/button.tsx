@@ -14,7 +14,7 @@ export default function Button({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className="bg-chapel-purple-500 flex items-center justify-center px-5 py-2 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed w-full"
+      className="bg-chapel-purple-500 font-bold font-audiowide tracking-wider flex items-center justify-center px-5 py-2 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed w-full"
       {...rest}
     >
       {isLoading && (

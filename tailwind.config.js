@@ -5,9 +5,13 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   mode: "jit",
   theme: {
+    letterSpacing: {
+      widest: ".5em",
+    },
     extend: {
       fontFamily: {
-        sans: ["Audiowide", ...defaultTheme.fontFamily.sans],
+        sans: ["EurostileBold", ...defaultTheme.fontFamily.sans],
+        audiowide: ["audiowide", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         "chapel-orange-200": "#ff9b0f",

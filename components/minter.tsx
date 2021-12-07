@@ -167,8 +167,10 @@ export default function Minter() {
   }
 
   return (
-    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 lg:w-2/6 xl:w-2/6 h-min-content mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
+    <div className="p-10 md:w-2/4 ring-white ring-8 ring-opacity-10 xl:w-2/6 h-min-content mx-auto bg-gradient-to-b from-chapel-orange-500 via-chapel-orange-200 to-chapel-yellow-200 rounded-3xl shadow-xl bg-opacity-75">
       <div className="space-y-4 h-full">
+        <h1 className="font-audiowide text-2xl">{t("minting.title")}</h1>
+        <p>{t("minting.description")}</p>
         <div className="relative h-2/3 md:h-96">
           <Canvas>
             <OrbitControls autoRotate autoRotateSpeed={2} enablePan={true} />

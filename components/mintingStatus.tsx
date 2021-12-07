@@ -27,13 +27,7 @@ export default function MintingStatus({
   }
 
   if (!saleIsActive) {
-    return (
-      <>
-        <p>{t("minting.pre_sale_1")}</p>
-        <p>{t("minting.pre_sale_2")}</p>
-        <p>{t("minting.pre_sale_3")}</p>
-      </>
-    );
+    return <p>{t("minting.pre_sale_1")}</p>;
   }
 
   if (receipt) {

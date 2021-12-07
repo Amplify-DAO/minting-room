@@ -1,12 +1,16 @@
 {
+  "header": {
+    "tagline": "The gig that keeps paying"
+  },
   "wallet": {
     "connect_button": "Connect wallet",
     "disconnect_button": "Disconnect"
   },
   "minting": {
-    "pre_sale_1": "It's nearly time.",
-    "pre_sale_2": "The Chapel AAA NFT will be yours to mint on 9th December. 1808 will be up for grabs. Make sure you get yours.",
-    "pre_sale_3": "Let's change live music from the grass roots up!",
+    "title": "Welcome to the Chapel Minting Room",
+    "description": "Chapel is a foundation for musicians and workers in the live music industry. Owners of the Chapel AAA NFT will change the course of live music forever, get their name etched on a piece of slate (on our real Chapel roof and in the Metaverse), get VIP priority access to all gigs, get exclusive access to the Chapel festival in Wales, and make history by changing how musicians earn a living.",
+    "pre_sale_1": "The Chapel AAA NFT goes live on 9th December. You can get a maximum of four. Let's change music from the grassroots up.",
+    "during_sale_1": "Hey! You've arrived. The Chapel AAA NFT is now available. Get yours (up to four max) right now. Let's change music from the grassroots up.",
     "mint_button": "Mint",
     "is_minting_button": "Minting NFT...",
     "view_transaction_button": "View transaction"
